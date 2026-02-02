@@ -62,6 +62,12 @@ interface ILendingPool {
     /// @notice Thrown when amount exceeds uint128 bounds.
     error AmountOverflow();
 
+    /// @notice Thrown when critical view is called during reentrancy.
+    error ReadOnlyReentrancy();
+
+    /// @notice Thrown when asset address is zero.
+    error ZeroAddress();
+
     // ═══════════════════════════════════════════════════════════════════════════
     // EXTERNAL FUNCTIONS
     // ═══════════════════════════════════════════════════════════════════════════

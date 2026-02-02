@@ -104,6 +104,7 @@ contract LendingPool is
      *      Initialization is handled by Initializable + OwnableUpgradeable.
      */
     function initialize(address asset_) external initializer {
+        if (asset_ == address(0)) revert ZeroAddress();
         __Ownable_init(msg.sender);
 
         _asset = asset_;
@@ -148,7 +149,11 @@ contract LendingPool is
         (uint128 collateral, uint128 scaledDebt) = DataTypes.unpackUserConfig(
             _userConfigs[msg.sender]
         );
+
+        // FIX: Prevent collateral accumulation overflow
+        if (amount > type(uint128).max - collateral) revert AmountOverflow();
         collateral += uint128(amount);
+
         _userConfigs[msg.sender] = DataTypes.packUserConfig(
             collateral,
             scaledDebt
@@ -157,7 +162,12 @@ contract LendingPool is
         // Update total liquidity
         (uint128 totalLiquidity, uint128 totalBorrows) = DataTypes
             .unpackVolumeState(_volumeState);
+
+        // FIX: Prevent totalLiquidity accumulation overflow
+        if (amount > type(uint128).max - totalLiquidity)
+            revert AmountOverflow();
         totalLiquidity += uint128(amount);
+
         _volumeState = DataTypes.packVolumeState(totalLiquidity, totalBorrows);
 
         TransientGuard.exit();
@@ -266,6 +276,8 @@ contract LendingPool is
         );
 
         // Update total borrows
+        // FIX: Prevent totalBorrows accumulation overflow
+        if (amount > type(uint128).max - totalBorrows) revert AmountOverflow();
         _volumeState = DataTypes.packVolumeState(
             totalLiquidity,
             totalBorrows + uint128(amount)
@@ -550,7 +562,11 @@ contract LendingPool is
     }
 
     /// @inheritdoc ILendingPool
+    /// @dev Protected against read-only reentrancy per THREATS.md Section 2.A
     function isHealthy(address user) external view returns (bool) {
+        // FIX: Critical view function must check lock state per THREATS.md
+        if (TransientGuard.isLocked()) revert ReadOnlyReentrancy();
+
         (uint128 collateral, uint128 scaledDebt) = DataTypes.unpackUserConfig(
             _userConfigs[user]
         );
