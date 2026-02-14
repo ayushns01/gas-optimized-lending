@@ -57,19 +57,32 @@ All measurements MUST follow these rules:
 
 ---
 
-## 3. Benchmark Table (To Be Populated)
+## 3. Benchmark Results
 
-| Action | Reference (Gas) | Optimized (Gas) | Δ Gas | Δ (%) |
-|------|----------------|-----------------|-------|-------|
-| Deposit | TBD | TBD | TBD | TBD |
-| Borrow | TBD | TBD | TBD | TBD |
-| Repay | TBD | TBD | TBD | TBD |
-| Liquidate | TBD | TBD | TBD | TBD |
-| View Debt | TBD | TBD | TBD | TBD |
+Measured via `forge test --match-contract GasBenchmark --gas-report`.
+Function-level gas per external call (not total test gas).
 
-**Note**
-* Reference contracts are located in `test/mocks/ReferencePool.sol`.
-* Numbers are provisional until populated by snapshot output.
+### Raw Function Gas (from `--gas-report`)
+
+| Action | Reference | Optimized | Δ Gas | Δ (%) |
+|--------|-----------|-----------|-------|-------|
+| Deposit (warm) | 102,138 | 86,111 | -16,027 | **-15.7%** |
+| Withdraw | 70,536 | 49,451 | -21,085 | **-29.9%** |
+| Borrow | 54,449 | 50,524 | -3,925 | **-7.2%** |
+| Repay | 61,453 | 40,110 | -21,343 | **-34.7%** |
+| Liquidate | 61,290 | 44,970 | -16,320 | **-26.6%** |
+| View Debt | 2,788 | 2,845 | +57 | +2.0% |
+
+### Caveats
+
+* **Proxy overhead:** The Optimized pool runs behind an ERC1967Proxy
+  (delegatecall ≈ 2,600 gas). The Reference pool is called directly.
+  This means the Optimized numbers include proxy tax; the true
+  implementation-level savings are **higher** than shown.
+* **View Debt:** +2% overhead is from bit-unpacking on a pure read path.
+  View calls are off-chain and gas-free in production.
+* Reference contracts: `test/mocks/ReferencePool.sol`.
+* Benchmark tests: `test/benchmarks/GasBenchmark.t.sol`.
 
 ---
 
