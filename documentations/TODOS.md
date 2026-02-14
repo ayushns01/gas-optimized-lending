@@ -8,9 +8,9 @@ This document is **authoritative**.
 
 ---
 
-## Phase 0 — Environment Setup
+## Phase 0 — Environment Setup ✅
 
-- [ ] **Initialize Project**
+- [x] **Initialize Project**
   * `forge init`
   * Configure `foundry.toml`
     * `evm_version = cancun`
@@ -22,9 +22,9 @@ This document is **authoritative**.
 
 ---
 
-## Phase 1 — Storage & Primitives (No Logic)
+## Phase 1 — Storage & Primitives (No Logic) ✅
 
-- [ ] **Library:** `DataTypes.sol`
+- [x] **Library:** `DataTypes.sol`
   * Define packed storage layouts
   * Implement bitmask helpers
   * No math
@@ -32,32 +32,32 @@ This document is **authoritative**.
   * No state mutation outside encoding/decoding
 
 **Gate**
-* Storage layout must match `SystemArchitecture.md` exactly.
+* Storage layout must match `ARCHITECTURE.md` exactly.
 * Proceed only after manual review.
 
 ---
 
-## Phase 2 — Safety Primitives
+## Phase 2 — Safety Primitives ✅
 
-- [ ] **Library:** `TransientGuard.sol`
+- [x] **Library:** `TransientGuard.sol`
   * Implement EIP-1153 reentrancy guard in assembly
   * No protocol logic
   * No storage reads/writes other than transient storage
 
 **Gate**
-* Must conform to ADR-001 and ThreatModel.md.
+* Must conform to ADR-001 and THREATS.md.
 * No interaction with `DataTypes`.
 
 ---
 
-## Phase 3 — Math Layer (Isolated)
+## Phase 3 — Math Layer (Isolated) ✅
 
-- [ ] **Library:** `OptimizedMath.sol`
+- [x] **Library:** `OptimizedMath.sol`
   * Yul-based interest math only
   * No storage access
   * No protocol assumptions
 
-- [ ] **Tests:** Differential fuzz tests
+- [x] **Tests:** Differential fuzz tests
   * Reference Solidity math vs Optimized Yul math
   * Input bounds enforced per `ASSUMPTIONS.md`
 
@@ -67,9 +67,9 @@ This document is **authoritative**.
 
 ---
 
-## Phase 4 — Core Protocol Logic
+## Phase 4 — Core Protocol Logic ✅
 
-- [ ] **Core:** `LendingPool.sol`
+- [x] **Core:** `LendingPool.sol`
   * Implement shared internal helpers first:
     * Interest accrual
     * Index updates
@@ -85,30 +85,33 @@ This document is **authoritative**.
 
 **Gate**
 * Must conform to:
-  * SystemArchitecture.md
+  * ARCHITECTURE.md
   * SCOPE.md
   * THREATS.md
 * No gas benchmarking yet.
 
 ---
 
-## Phase 5 — System Validation
+## Phase 5 — System Validation ✅
 
-- [ ] **Tests:** Stateful invariant testing
+- [x] **Tests:** Stateful invariant testing
   * Solvency invariants
   * Accounting invariants
+  * 5 O(1) invariants, 256 runs × 500 calls = 0 failures
 
 **Gate**
 * All invariants must hold.
-* No optimization allowed to “fix” failing tests.
+* No optimization allowed to "fix" failing tests.
 
 ---
 
-## Phase 6 — Measurement & Reporting
+## Phase 6 — Measurement & Reporting ✅
 
-- [ ] **Audit:** Gas benchmarking
-  * `forge snapshot`
-  * Populate `GAS.md`
+- [x] **Benchmark:** Gas comparison
+  * `ReferencePool.sol` — unoptimized baseline
+  * `GasBenchmark.t.sol` — 14 paired tests
+  * `forge test --gas-report`
+  * Populate `GAS.md` with measured results
 
 **Rule**
 * Gas results are **observational only**.

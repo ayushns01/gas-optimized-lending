@@ -6,7 +6,7 @@ to reduce context switching during development.
 This file is **advisory only**.  
 In case of conflict, the following documents take precedence:
 
-1. SystemArchitecture.md
+1. ARCHITECTURE.md
 2. DECISIONS.md (ADRs)
 3. ASSUMPTIONS.md
 4. THREATS.md

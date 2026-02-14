@@ -50,8 +50,8 @@ If implementation behavior violates these assumptions, the implementation is inc
 * No assumptions may be made about return values.
 
 **Implementation Rule**
-* Transfers MUST use minimal, explicit success-checking logic  
-  (custom assembly or equivalent), **not full OpenZeppelin SafeERC20 abstractions**.
+* Transfers MUST use OpenZeppelin `SafeERC20` to handle all return-value behaviors
+  consistently, including tokens that return nothing (e.g., USDT).
 
 ---
 

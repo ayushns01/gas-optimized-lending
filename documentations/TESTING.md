@@ -83,3 +83,41 @@ function testFuzz_MathParity(
 
     assertEq(reference, optimized, "Yul math divergence");
 }
+```
+
+---
+
+### C. Stateful Invariant Testing (Protocol Validation)
+
+**Why This Is Mandatory**
+
+Unit tests verify individual paths. Invariant tests verify **global properties**
+hold across randomized sequences of protocol actions.
+
+**Handler** (`test/invariants/LendingPoolHandler.sol`)
+* Dispatches randomized `deposit`, `withdraw`, `borrow`, `repay`, `liquidate`, `warp`
+* Tracks actual token flows via ghost variables (O(1), not O(N) sums)
+* Uses `try/catch` to update ghost state only on successful calls
+
+**Invariants** (`test/invariants/LendingPoolInvariants.t.sol`)
+* **INV-1:** Token Solvency — `pool.balance == net token flow` (strict equality)
+* **INV-2:** Principal Safety — `inflows >= withdrawals`
+* **INV-3:** Liquidity Safety — `totalLiquidity >= totalBorrows`
+* **INV-4:** Borrow Index Monotonicity — index never decreases
+* **INV-5:** Available Liquidity Consistency — view matches internal state
+
+**Configuration:** 256 runs × 500 calls = 128,000 total calls, 0 failures.
+
+---
+
+### D. Gas Benchmarking (Measurement)
+
+**Scope**
+* Side-by-side comparison of Optimized (`LendingPool.sol`) vs Reference (`ReferencePool.sol`)
+* Reference uses OZ ReentrancyGuard, unpacked storage, checked Solidity math
+* Identical business logic, events, and error conditions
+
+**Tests** (`test/benchmarks/GasBenchmark.t.sol`)
+* 14 paired benchmarks covering cold/warm deposits, withdraw, borrow, repay, liquidate, and view
+* Measured via `forge test --gas-report`
+* Results populated in `documentations/GAS.md`

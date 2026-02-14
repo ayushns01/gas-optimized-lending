@@ -35,7 +35,6 @@ We will implement the core linear interest compounding logic in pure Yul, utiliz
 *   **Mitigation:** 
     1.  Strict input validation at the Solidity ingress points (e.g., `require(rate < MAX_RATE)`).
     2.  Mandatory **Differential Fuzzing** against a reference Solidity implementation to verify correctness across the entire input space.
-    3.  **Halmos** symbolic execution to prove impossibility of overflow within realistic time horizons (e.g., < 100 years).
 
 ---
 

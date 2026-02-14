@@ -100,10 +100,13 @@ An attacker gains control of the admin / owner key.
 **Vector**  
 Admin pauses the protocol indefinitely, freezing user funds.
 
-**Mitigation**
-* **Partial Pausing:** Pausing restricts **risk-increasing actions only** (`deposit`, `borrow`).
-* **Exit Assurance:** Risk-reducing actions (`repay`, `liquidate`) remain available even when paused,
-  ensuring users can always close positions.
+**Status: NOT APPLICABLE**
+
+* No pause mechanism is currently implemented.
+* All functions remain accessible at all times.
+* If pause is added in a future upgrade, it MUST follow partial-pausing:
+  * Restrict **risk-increasing actions only** (`deposit`, `borrow`).
+  * **Exit paths** (`repay`, `liquidate`, `withdraw`) MUST remain available.
 
 ---
 

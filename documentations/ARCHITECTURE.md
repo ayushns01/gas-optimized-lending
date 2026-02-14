@@ -18,7 +18,8 @@ While the bytecode resides in a single implementation contract to save `DELEGATE
 ### Core Contracts
 
 * **`LendingPool.sol` (Entry Point):**
-  * Inherits: `UUPSUpgradeable`, `OwnableUpgradeable`, `TransientGuard`
+  * Inherits: `Initializable`, `UUPSUpgradeable`, `OwnableUpgradeable`, `ILendingPool`
+  * Uses: `TransientGuard` (as a library, not via inheritance), `SafeERC20`
   * Responsibility: User interface, state management, and high-level flow control (Check-Effects-Interactions)
   * Optimization: Acts as the **sole storage holder**
 
