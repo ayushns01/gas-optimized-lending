@@ -70,7 +70,8 @@ The most gas-critical flow is the **Repay** action, as it involves state reads, 
    **External Call Constraints**
    * Only standard ERC-20 tokens with consistent return behavior are supported
    * Fee-on-transfer, rebasing, or callback-enabled tokens are explicitly **out of scope**
-   * External calls must occur **after** all state updates (CEI enforced)
+   * **Outbound** transfers (`withdraw`, `borrow`, `liquidate` collateral return) occur **after** all state updates (CEI enforced)
+   * **Inbound** transfers (`deposit`, `repay`, `liquidate` debt payment) occur **before** state writes (Checks-Interactions-Effects). This is safe because the caller initiates the transfer, and `TransientGuard` prevents reentrancy.
 
 6. **State Write**
    * `SSTORE` updated packed struct back to storage
@@ -116,11 +117,44 @@ Gas savings are primarily achieved through aggressive utilization of EVM 32-byte
 
 ---
 
-### Slot 51: Protocol Global State
+### Slot 51: Protocol Global State (VolumeState)
 
 Global accounting data is packed into a single slot.
 
 ```text
-[ Unused (0 bits) ][ Total Borrows (128 bits) ][ Total Liquidity (128 bits) ]
-|                  |                           |                             |
-<-- MSB                                                                  LSB
+[ Total Liquidity (128 bits) ][ Total Borrows (128 bits) ]
+|                             |                           |
+<-- MSB (bits 128-255)         LSB (bits 0-127) -->
+```
+
+---
+
+### Slot 52: Rate State
+
+Interest indices and timestamp packed into a single slot.
+
+```text
+[ Borrow Index (128 bits) ][ Liquidity Index (96 bits) ][ Timestamp (32 bits) ]
+|                          |                            |                      |
+<-- MSB (bits 128-255)      bits 32-127                  LSB (bits 0-31) -->
+```
+
+---
+
+### Slot 53+: UserConfig Mapping
+
+Per-user state via `mapping(address => uint256)`.
+
+```text
+[ User Debt (128 bits) ][ User Collateral (128 bits) ]
+|                       |                              |
+<-- MSB (bits 128-255)   LSB (bits 0-127) -->
+```
+
+---
+
+### Post-Mapping: `_asset`
+
+* **`_asset`** (`address`): The underlying ERC-20 token address.
+* Occupies its own slot after the mapping declaration.
+* Set once during `initialize()`, never mutated.
