@@ -27,7 +27,7 @@ library TransientGuard {
     /// @dev Keccak256("GAS_OPTIMIZED_LENDING_GUARD_SLOT")
     ///      Using a unique slot to avoid collisions with other transient storage users.
     bytes32 internal constant GUARD_SLOT =
-        0x2e19d7cb992ce58556b6b77c9803bf3ec1bd668b577002061e888636baefc674;
+        0x2d793ddae4f985069e35e48b371f7a0099b2e7941cc865157b6fee0b6f8eaa9e;
 
     /// @dev Value representing "LOCKED" state.
     ///      Using 2 (uint256) instead of boolean to match standard reentrancy guard patterns,
