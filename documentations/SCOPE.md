@@ -43,6 +43,15 @@ The following features constitute the **Gas-Optimized Lending Engine**.
   * Partial liquidation is the default behavior
   * All parameters must be explicitly defined (no inferred economics)
 
+* **Flash Loan (ERC-3156)**
+  * Temporary borrowing of available liquidity for a single transaction.
+  * Fee implementation (or fee-free architecture) to be defined.
+  * Must conform strictly to ERC-3156 standard.
+
+* **Permit (ERC-2612)**
+  * Allows gasless token approvals combined with actions (`depositWithPermit`, `repayWithPermit`).
+  * Depends on the underlying asset supporting EIP-2612.
+
 ---
 
 ### B. Math & Economics
@@ -54,3 +63,10 @@ The following features constitute the **Gas-Optimized Lending Engine**.
 
 * **Interest Model**
   * Linear kinked interest rate model.
+
+### C. Advanced Primitives (Phase 7 & 8)
+
+* **Verification**
+  * Fuzzing (Foundry)
+  * Invariant Testing (O(1) ghost variables)
+  * Formal Verification (Halmos) for Yul Math blocks validation.

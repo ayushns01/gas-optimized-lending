@@ -128,3 +128,38 @@ This task list does **not**:
 * Allow refactors during measurement
 
 Any deviation requires an updated ADR.
+
+---
+
+## [ ] Phase 7: Advanced DeFi Primitives (UX & Composability)
+
+**Goal:** Implement EIP-3156 Flash Loans and EIP-2612 Permits to showcase real-world DeFi integration skills.
+
+* [ ] **`ILendingPool.sol` (Interface)**
+  * Expand interface to include ERC-3156 and ERC-2612 functions.
+* [ ] **`LendingPool.sol` (Implementation)**
+  * Implement `flashLoan()`.
+  * Leverage `TransientGuard` to ensure reentrancy safety during the callback.
+  * Implement `depositWithPermit()` and `repayWithPermit()`.
+* [ ] **Testing**
+  * Add unit tests for successful and failing flash loans.
+  * Add cheatcode `vm.sign` tests for Permit flows.
+  * Add gas benchmark tests for new functions.
+* [ ] **Documentation**
+  * Update `GAS.md`.
+
+---
+
+## [ ] Phase 8: Formal Verification (Provable Security)
+
+**Goal:** Mathematically prove the absence of overflows in the `unchecked` Yul math blocks using Halmos.
+
+* [ ] **`test/halmos/OptimizedMath.sym.sol`**
+  * Formally verify `mulDiv()` does not overflow under bounded conditions.
+  * Formally verify `mulDivUp()` rounding behavior.
+  * Formally verify `calculateLinearInterest()` bounds.
+* [ ] **Execution**
+  * Run `halmos` successfully.
+* [ ] **Documentation**
+  * Update documentation to proudly display formal verification proofs.
+  * Adjust `README.md` to highlight this senior-level flex.
